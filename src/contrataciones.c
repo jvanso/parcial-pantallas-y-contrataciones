@@ -150,20 +150,24 @@ int modificarContratacion(sContratacion* arrayContrataciones, int limite,sPantal
 {
 	int retorno=-1;
 	int indiceModificar;
+	int indice;
 	int auxCuit;
 	//int indicePantalla;
 			if(arrayPantallas != NULL && limite>0 && arrayContrataciones != NULL && limitePantallas>0)
 			{
-				if(utn_getNumero(&auxCuit, "Ingrese cuit del cliente: ", "CUIT invalido", 0, 20000, 2)==0)
+				if(utn_getInt(&auxCuit, "Ingrese cuit del cliente: ", "CUIT invalido", 0, 20000, 2)==0)
 				{
-					if(imprimirPantallasContratadasPorCuit(arrayContrataciones, limite, arrayPantallas, limitePantallas, auxCuit)==0)
-					{
-						if(buscarPantallaPorIdContratacion(arrayContrataciones, limite, &indiceModificar)==0)
-							{
-									utn_getNumero(&arrayContrataciones[indiceModificar].cantDias, "Ingrese nueva cantidad de dias: ", "Error nueva cantidad de dias", 0, 20, 2);
-							}
-					}
+					mostrarPantallas(arrayPantallas, limitePantallas);
+					imprimirPantallasContratadasPorCuit(arrayContrataciones, limite, arrayPantallas, limitePantallas, auxCuit);
 				}
+					if(utn_getInt(&indice,"Ingrese ID de la contratacion: ", "Error id contratacion",0,1000,2)==0)
+						{
+								indiceModificar = cont_buscarId(arrayContrataciones, limite, indice);
+								fflush(stdin);
+								utn_getNumero(&arrayContrataciones[indiceModificar].cantDias, "Ingrese nueva cantidad de dias: ", "Error nueva cantidad de dias", 0, 20, 2);
+						}
+
+
 				retorno=0;
 			}
 		return retorno;
@@ -171,36 +175,43 @@ int modificarContratacion(sContratacion* arrayContrataciones, int limite,sPantal
 int bajaContratacion(sContratacion* arrayContrataciones, int limite, sPantalla* arrayPantallas, int limitePantallas)
 {
 	int retorno=-1;
+	int auxCuit;
 	int indiceBaja;
+	int indice;
 	if(arrayPantallas != NULL && limite>0 && arrayContrataciones != NULL && limitePantallas>0)
 	{
-		if(buscarContratacionPorCuit(arrayContrataciones,limite,&indiceBaja)==0)
+		if(utn_getInt(&auxCuit, "Ingrese cuit de la contratacion a dar de baja: ", "Cuit invalido", 0, 20000, 2)==0)
 		{
-			mostrarPantallas(arrayPantallas,limitePantallas);
-			if(buscarPantallaPorId(arrayPantallas,limitePantallas,&indiceBaja)==0)
-			{
-				arrayContrataciones[indiceBaja].isEmpty=LIBRE;
-			}
+			mostrarPantallas(arrayPantallas, limitePantallas);
+			imprimirPantallasContratadasPorCuit(arrayContrataciones, limite, arrayPantallas, limitePantallas, auxCuit);
 		}
+			if(utn_getInt(&indice,"Ingrese ID de la contratacion: ", "Error id contratacion",0,1000,2)==0)
+				{
+					indiceBaja = cont_buscarId(arrayContrataciones, limite, indice);
+					arrayContrataciones[indiceBaja].isEmpty = LIBRE;
+				}
+
 	}
+
 	return retorno;
 }
 int imprimirPantallasContratadasPorCuit(sContratacion* arrayContrataciones, int limite, sPantalla* arrayPantallas, int limitePantallas,int cuitContratacion)
 {
 	int retorno=-1;
 	int indiceArrayPantalla;
-	int auxIdPantallas;
+
 	if(arrayContrataciones != NULL && limite>0 && arrayPantallas != NULL && limitePantallas>0 && cuitContratacion>0)
 	{
-		printf("ID        NOMBRE DEL ARCHIVO             CUIT              DIAS                 ID PANTALLA");
+
 		for(int i=0;i<limite;i++)
 		{
 			if(arrayContrataciones[i].isEmpty==CONTRATADO && arrayContrataciones[i].cuitCliente == cuitContratacion)
 			{
-				auxIdPantallas = arrayContrataciones[i].idPantalla;
+				retorno=0;
 				buscarPantallaPorId(arrayPantallas, limitePantallas, &indiceArrayPantalla);
+				printf("ID        NOMBRE DEL ARCHIVO             CUIT              DIAS                 ID PANTALLA\n");
 				printf("%d %15s %24d %18d %18d\n",arrayContrataciones[i].idContratacion,arrayContrataciones[i].nombreArchivo,arrayContrataciones[i].cuitCliente,arrayContrataciones[i].cantDias,arrayContrataciones[i].idPantalla);
-				printf("%s %15s %8s %15.2f",arrayPantallas[indiceArrayPantalla].direccion,arrayPantallas[indiceArrayPantalla].nombre,arrayPantallas[indiceArrayPantalla].tipoPantalla,arrayPantallas[indiceArrayPantalla].precio);
+				printf("%s %15s %8s %15.2f\n",arrayPantallas[indiceArrayPantalla].direccion,arrayPantallas[indiceArrayPantalla].nombre,arrayPantallas[indiceArrayPantalla].tipoPantalla,arrayPantallas[indiceArrayPantalla].precio);
 
 			}
 		}
@@ -208,3 +219,44 @@ int imprimirPantallasContratadasPorCuit(sContratacion* arrayContrataciones, int 
 
 	return retorno;
 }
+int cont_buscarId(sContratacion* arrayContrataciones, int limite, int valorBuscado)
+{
+	int respuesta;
+
+	if(arrayContrataciones != NULL && limite>0 && valorBuscado>=0)
+	{
+		for(int i=0;i<limite;i++)
+		{
+			if(arrayContrataciones[i].idContratacion==valorBuscado)
+			{
+				respuesta = i;
+			}
+		}
+	}
+	return respuesta;
+}
+/*
+int info_imprimirPantallasContratadasByCuit(Contratacion* arrayContrataciones,int limiteContrataciones,Pantalla* arrayPantallas,int limitePantallas,char* auxiliarCuit)
+{
+	int retorno = -1;
+	int i;
+	int indiceArrayPantalla;
+	int idPantalla;
+	if(arrayContrataciones != NULL && limiteContrataciones > 0 && arrayPantallas != NULL && limitePantallas > 0 && auxiliarCuit != NULL)
+	{
+		for(i=0;i<limiteContrataciones;i++)
+		{
+			if(arrayContrataciones[i].isEmpty == 0 && strncmp(arrayContrataciones[i].cuit,auxiliarCuit,CUIT_LEN) == 0)
+			{
+				retorno = 0;
+				idPantalla = arrayContrataciones[i].idPantalla;
+				indiceArrayPantalla = pan_buscarId(arrayPantallas,limitePantallas,idPantalla);
+
+				printf("\nID: %d - Archivo: %s - Cuit: %s - Dias: %d - IdPantalla: %d",arrayContrataciones[i].id,arrayContrataciones[i].archivo,arrayContrataciones[i].cuit,arrayContrataciones[i].dias,arrayContrataciones[i].idPantalla);
+				printf(" - %s - %s - %.2f - %s",arrayPantallas[indiceArrayPantalla].nombre,arrayPantallas[indiceArrayPantalla].direccion,arrayPantallas[indiceArrayPantalla].precio,TXT_TIPOS[arrayPantallas[indiceArrayPantalla].tipo]);
+			}
+		}
+	}
+	return retorno;
+}
+*/

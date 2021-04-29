@@ -129,6 +129,7 @@ int buscarPantallaPorId(sPantalla* arrayPantallas, int limite, int* index)
 				//printf("\nINDICEEEE %d\n", indice);
 				break;
 			}
+
 		}
 		*index = indice;
 	}
@@ -136,7 +137,7 @@ int buscarPantallaPorId(sPantalla* arrayPantallas, int limite, int* index)
 }
 int idPantallas()
 {
-    static int id = 0;
+    static int id = -1;
     id++;
     return id;
 }

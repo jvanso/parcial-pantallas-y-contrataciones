@@ -27,6 +27,7 @@ typedef struct
 int buscarContratacionLibre(sContratacion* arrayContrataciones, int limite, int* indice);
 int initContrataciones(sContratacion* arrayContrataciones, int limite);
 int idContrataciones();
+int cont_buscarId(sContratacion* arrayContrataciones, int limite, int valorBuscado);
 int modificarContratacion(sContratacion* arrayContrataciones, int limite,sPantalla* arrayPantallas, int limitePantallas);
 int buscarContratacionPorCuit(sContratacion* arrayContrataciones, int limite, int* indiceCuit);
 int bajaContratacion(sContratacion* arrayContrataciones, int limite, sPantalla* arrayPantallas, int limitePantallas);
